@@ -30,7 +30,7 @@ exports.verifyToken = async (req, res, next) => {
             console.log(decoded.user_id)
             next();  
         } else {
-            throw new Error("Joker")
+            throw new Error("Not a right user")
         }
 
 
