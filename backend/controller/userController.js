@@ -3,6 +3,8 @@ const token = require('../services/jwtTokenService')
 
 
 exports.getUserbyId = async (req, res) => {
+    console.log("---------getUserbyId API triggered---------")
+
     try {
         const id = req.params.id;
         const userData = await userServices.getUserById({ id: id });
@@ -22,10 +24,31 @@ exports.getUserbyId = async (req, res) => {
 }
 
 exports.getUserbyName = async (req, res) => {
+    console.log("---------getUserbyName API triggered---------")
     try {
-        const { user_name } = req.headers;
-        console.log(user_name)
-        const userData = await userServices.getUserIdByName({ user_name: user_name });
+        const username = req.header('username');
+        const userData = await userServices.getUserByName({ username: username });
+
+        if (!userData) {
+            return res.status(404).send({ error: 'User not found!' })
+        }
+        return res.status(200).send({
+            data: userData
+        })
+    }
+    catch (error) {
+        return res.status(400).send({
+            error: error.message
+        })
+    }
+}
+
+exports.getUserIdbyName = async (req, res) => {
+    console.log("---------getUserIdbyName API triggered---------")
+    try {
+        const username = req.header('username');
+        console.log(username)
+        const userData = await userServices.getUserIdByName({ username: username });
 
         if (!userData) {
             return res.status(404).send({ error: 'User not found!' })
@@ -42,17 +65,18 @@ exports.getUserbyName = async (req, res) => {
 }
 
 exports.createNewUser = async (req, res) => {
+    console.log("---------userRegistration API triggered---------")
+
     try {
         const { username, password } = req.headers;
 
-        console.log("__________From CreateNewUser__________")
-        console.log("********************")
+        console.log("------------From CreateNewUser-----------")
+        console.log(" ")
         console.log({ username, password });
-        console.log("*********From CreateNewUser***********")
-        console.log("____________________")
-        
+        console.log("------------From CreateNewUser------------")
+        console.log(" ")
+
         const userData = await userServices.createNewUser({ username: username, password: password });
-        // console.log(userData)
 
         if (!userData) {
             return res.status(404).send({ error: 'User not created!' })
@@ -73,6 +97,8 @@ exports.createNewUser = async (req, res) => {
 }
 
 exports.userLogin = async (req, res) => {
+    console.log("---------userLogin API triggered---------")
+
     try {
         const { username, password } = req.headers;
         console.log({ username, password });
@@ -100,6 +126,8 @@ exports.userLogin = async (req, res) => {
 }
 
 exports.deleteUser = async (req, res) => {
+    console.log("---------userDelete API triggered---------")
+
     try {
         const user_id = req.params.id
 
