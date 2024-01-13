@@ -20,24 +20,15 @@ exports.getUserById = async ({ id }) => {
 
 exports.getUserIdByName = async ({ username: username }) => {
     try {
-        console.log("_________From getUserIdByName___________")
-        console.log("********************")
-        console.log(username)
-        console.log("********From getUserIdByName************")
-        console.log("____________________")
-
-
         const user_data = await db("user")
             .select("id")
             .where("user_name", username)
-        console.log("Hii")
 
         if (user_data.length > 0) {
             return user_data;
         }
-        else {
+        else
             return false;
-        }
 
     }
     catch (error) {
@@ -51,7 +42,6 @@ exports.getUserByName = async ({ username }) => {
         const user_data = await db("user")
             .select("*")
             .where("user_name", username)
-        console.log("Hii")
         return user_data[0];
 
     } catch (error) {
@@ -64,10 +54,8 @@ exports.getUserByName = async ({ username }) => {
 exports.createNewUser = async ({ username: username, password: password }) => {
     try {
         const existingUser = await this.getUserIdByName({ username: username })
-        console.log(existingUser)
-        console.log(username)
 
-        if (existingUser) {
+        if (existingUser.length >= 0) {
             throw new ReferenceError
         }
 
@@ -89,20 +77,19 @@ exports.createNewUser = async ({ username: username, password: password }) => {
             throw new Error('Failed to create a user')
         }
 
-        throw new Error('Use diff username')
+        throw new Error('Use different username')
     }
 }
 
 exports.userLogin = async ({ username, password }) => {
     try {
         const user = await this.getUserByName({ username })
-        console.log("Hii")
+
         if (!user) {
             return
         }
-        console.log("Hii")
         const validUser = await bcrypt.compare(password, user.password)
-        console.log(validUser)
+
         if (!validUser) {
             return
         }
