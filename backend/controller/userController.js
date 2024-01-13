@@ -4,8 +4,8 @@ const token = require('../services/jwtTokenService')
 
 exports.getUserbyId = async (req, res) => {
     try {
-        const user_id = req.params.id;
-        const userData = await userServices.getUserById({ user_id: user_id });
+        const id = req.params.id;
+        const userData = await userServices.getUserById({ id: id });
 
         if (!userData) {
             return res.status(404).send({ error: 'User not found!' })
@@ -23,9 +23,9 @@ exports.getUserbyId = async (req, res) => {
 
 exports.getUserbyName = async (req, res) => {
     try {
-        const { username } = req.headers;
-        console.log(username)
-        const userData = await userServices.getUserByName({ username: username });
+        const { user_name } = req.headers;
+        console.log(user_name)
+        const userData = await userServices.getUserIdByName({ user_name: user_name });
 
         if (!userData) {
             return res.status(404).send({ error: 'User not found!' })
@@ -44,15 +44,26 @@ exports.getUserbyName = async (req, res) => {
 exports.createNewUser = async (req, res) => {
     try {
         const { username, password } = req.headers;
+
+        console.log("__________From CreateNewUser__________")
+        console.log("********************")
         console.log({ username, password });
+        console.log("*********From CreateNewUser***********")
+        console.log("____________________")
+        
         const userData = await userServices.createNewUser({ username: username, password: password });
+        // console.log(userData)
 
         if (!userData) {
             return res.status(404).send({ error: 'User not created!' })
         }
-        return res.status(200).send({
-            message: "Done!"
-        })
+
+        if (userData) {
+            const id = await userServices.getUserIdByName({ username: username })
+            const genToken = await token.createToken({ id: id })
+            console.log(genToken)
+            return res.status(200).send({ Token: genToken, message: 'created and logged in' })
+        }
 
     } catch (error) {
         return res.status(400).send({
@@ -74,12 +85,9 @@ exports.userLogin = async (req, res) => {
 
 
         if (user_data) {
-            console.log("user_id")
-            const user = await userServices.getUserByName({username: username})
-            console.log(user.id)
-            const genToken = await token.createToken({ user: user })
-            console.log(genToken)
-            return res.status(200).send({ message: 'logged in' })
+            const id = await userServices.getUserIdByName({ username: username })
+            const genToken = await token.createToken({ id: id })
+            return res.status(200).send({ Token: genToken, message: 'logged in' })
         }
 
 
