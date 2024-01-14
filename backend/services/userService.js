@@ -23,7 +23,7 @@ exports.getUserIdByName = async ({ username: username }) => {
         const user_data = await db("user")
             .select("id")
             .where("user_name", username)
-
+            
         if (user_data.length > 0) {
             return user_data;
         }

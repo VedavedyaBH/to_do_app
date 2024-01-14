@@ -31,7 +31,6 @@ exports.createToken = async ({ id }) => {
 exports.verifyToken = async (req, res, next) => {
     const token = req.header('Authorization');
     let id = req.params.id;
-    console.log(id)
     const username = req.header('username');
 
     if (!token) {
@@ -44,8 +43,7 @@ exports.verifyToken = async (req, res, next) => {
 
         if (!id) {
             const user_id = await userServices.getUserIdByName({ username: username })
-            console.log("hi")
-            if (!user_id) {
+            if (user_id) {
                 id = JSON.stringify(user_id[0].id)
                 if (id === JSON.stringify(decoded.user[0].id)) {
                     console.log("---------token verifed---------")
@@ -71,8 +69,9 @@ exports.verifyToken = async (req, res, next) => {
 
 
     } catch (error) {
+        console.log("-------verification failed-----------")
         if (!ReferenceError) { res.status(401).json({ error: error.message }); }
-        res.status(401).json({ error: "User not found" })
+        res.status(401).json({ error: "User not found or JWT expired" })
 
     }
 }
