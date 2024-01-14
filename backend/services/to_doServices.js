@@ -39,3 +39,47 @@ exports.createTo_dos = async (user_id, to_do) => {
         throw new Error(error.message)
     }
 }
+
+exports.getTo_dos_byId = async (to_do_id, user_id) => {
+    try {
+        console.log(to_do_id);
+        const to_doData = await db("to_do")
+            .select("*")
+            .where("id", to_do_id[0].id)
+            .where("user_id", user_id)
+
+        return to_doData;
+
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
+exports.updateTo_doById = async (to_doData, user_id) => {
+    try {
+        const updatedData = await db("to_do")
+            .update({
+                title: to_doData[0].title,
+                description: to_doData[0].description
+            })
+            .where("id", to_doData[0].id)
+            .where("user_id", user_id)
+
+        return updatedData
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
+
+exports.deleteto_doById = async (to_do_id, user_id) => {
+    try {
+        const data = await db("to_do")
+            .delete("*")
+            .where("id", to_do_id[0].id)
+            .where("user_id", user_id)
+
+        return data
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
