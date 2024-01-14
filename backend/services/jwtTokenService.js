@@ -60,6 +60,9 @@ exports.verifyToken = async (req, res, next) => {
                 console.log("---------token verifed---------")
                 next();
             }
+            else{
+                throw new Error
+            }
         }
 
         else {
