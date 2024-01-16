@@ -90,7 +90,7 @@ exports.deleteto_doById = async (req, res) => {
             res.status(401).send("Could not delete")
         }
 
-        res.status(200).send("Delete")
+        res.status(200).send("Deleted")
 
     } catch (error) {
         res.status(400).send({ Error: error.message })
