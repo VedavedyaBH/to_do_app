@@ -2,6 +2,7 @@ const to_doServices = require("../services/to_doServices");
 
 exports.getAllTo_dos = async (req, res) => {
   try {
+    console.log("HIiiiiiiiiiii from todo gets")
     const user_id = req.header("userid");
     if (!user_id) {
       throw new Error("No user id found");
@@ -12,10 +13,11 @@ exports.getAllTo_dos = async (req, res) => {
     if (!to_doData) {
       res.status(404).send("Couldnot retrive");
     }
+    // console.log("byeeeee from todo gets")
+    // console.log(to_doData)
 
-    res.status(200).send({
-      data: to_doData,
-    });
+
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -31,9 +33,7 @@ exports.createTo_dos = async (req, res) => {
       res.status(404).send("Couldnot create");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -49,9 +49,7 @@ exports.setStatus = async (req, res) => {
       res.status(404).send("Couldnot update the status");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -69,9 +67,7 @@ exports.getTo_dos_byId = async (req, res) => {
       res.status(401).send("Could not retreive");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -80,7 +76,7 @@ exports.getTo_dos_byId = async (req, res) => {
 exports.updateTo_doById = async (req, res) => {
   try {
     const to_doData = req.body;
-    console.log(to_doData)
+    console.log(to_doData);
     const user_id = req.header("userid");
 
     const data = await to_doServices.updateTo_doById(to_doData, user_id);
@@ -88,9 +84,7 @@ exports.updateTo_doById = async (req, res) => {
     if (!data) {
       res.status(401).send("Oops!");
     }
-    res.status(200).send({
-      updatedData: data,
-    });
+    res.status(200).send({ data });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }

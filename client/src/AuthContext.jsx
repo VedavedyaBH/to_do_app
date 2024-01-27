@@ -13,31 +13,34 @@ export const AuthProvider = ({ children }) => {
     setUsername(newUsername);
     setToken(newToken);
 
-    console.log(newUsername);
+    console.log(JSON.stringify(newUsername));
+    console.log(newToken);
 
     try {
       const response = await fetch("http://localhost:8086/api/user/name/id", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: newToken,
         },
         body: JSON.stringify({
           username: newUsername.trim(),
         }),
       });
       console.log(response.status);
+
       if (response.status === 200) {
         let _userid = await response.json();
-        console.log(_userid);
-        setUserid(_userid);
-        localStorage.setItem("userid", JSON.stringify({ _userid }));
+        console.log(_userid.userid);
+        setUserid(_userid.userid);
+        localStorage.setItem("userid", _userid.userid);
       }
     } catch (error) {
       console.error("Error:", error);
     }
 
-    localStorage.setItem("username", JSON.stringify({ newUsername }));
-    localStorage.setItem("token", JSON.stringify({ newToken }));
+    localStorage.setItem("username", JSON.stringify(newUsername));
+    localStorage.setItem("token", newToken);
   };
 
   const logout = () => {
@@ -47,6 +50,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("username");
     localStorage.removeItem("userid");
     localStorage.removeItem("token");
+    console.log("cleared")
   };
 
   const contextValue = {

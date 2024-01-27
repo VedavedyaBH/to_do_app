@@ -1,5 +1,6 @@
 const userServices = require("../services/userService");
 const token = require("../services/jwtTokenService");
+const zod = require("zod");
 
 exports.getUserbyId = async (req, res) => {
   console.log("---------getUserbyId API triggered---------");
@@ -11,8 +12,8 @@ exports.getUserbyId = async (req, res) => {
     if (!userData) {
       return res.status(404).send({ error: "User not found!" });
     }
-    return res.status(200).send({
-      data: userData,
+    return res.status(200).json({
+      userData,
     });
   } catch (error) {
     return res.status(400).send({
@@ -23,38 +24,63 @@ exports.getUserbyId = async (req, res) => {
 
 exports.getUserbyName = async (req, res) => {
   console.log("---------getUserbyName API triggered---------");
+
+  const schema = zod.string();
+
   try {
     const username = req.header("username");
-    const userData = await userServices.getUserByName({ username: username });
+    console.log(username);
+    const validationResult = schema.safeParse(username);
+    console.log(validationResult);
+
+    if (validationResult.error) {
+      return res.status(400).send({ error: validationResult.error.message });
+    }
+
+    const userData = await userServices.getUserByName({ username });
 
     if (!userData) {
       return res.status(404).send({ error: "User not found!" });
     }
-    return res.status(200).send({
-      data: userData,
+
+    return res.status(200).json({
+      userData,
     });
   } catch (error) {
-    return res.status(400).send({
-      error: error.message,
+    return res.status(500).send({
+      error: "Internal Server Error",
     });
   }
 };
 
 exports.getUserIdbyName = async (req, res) => {
   console.log("---------getUserIdbyName API triggered---------");
+  const schema = zod.object({
+    username: zod.string(),
+  });
   try {
-    const username = req.body;
-    console.log(username);
-    const userData = await userServices.getUserIdByName({
-      username: username.username
+    const { username } = req.body;
+    console.log(
+      "Hellpppppppppppppppppppooooooooooooooooooooooooooooooooooooooo"
+    );
+
+    console.log({ username });
+
+    const validationResult = schema.safeParse({ username });
+
+    if (validationResult.error) {
+      return res.status(400).send({ error: validationResult.error.message });
+    }
+
+    const userid = await userServices.getUserIdByName({
+      username: username,
     });
 
-    if (!userData) {
+    if (!userid) {
       return res.status(404).send({ error: "User not found!" });
     }
-    let userid = userData[0].id;
-    console.log(JSON.stringify(userid));
-    return res.status(200).send(JSON.stringify(userid));
+
+    return res.status(200).json({ userid });
   } catch (error) {
     return res.status(400).send({
       error: error.message,
@@ -65,8 +91,21 @@ exports.getUserIdbyName = async (req, res) => {
 exports.createNewUser = async (req, res) => {
   console.log("---------userRegistration API triggered---------");
 
+  const schema = zod.object({
+    username: zod.string(),
+    password: zod.string().min(8),
+  });
+
   try {
     const { username, password } = req.headers;
+
+    const validateInputs = schema.safeParse({ username, password });
+
+    console.log(validateInputs);
+
+    if (validateInputs.error) {
+      return res.status(400).send({ error: validateInputs.error.message });
+    }
 
     console.log("------------From CreateNewUser-----------");
     console.log(" ");
@@ -87,9 +126,7 @@ exports.createNewUser = async (req, res) => {
       const id = await userServices.getUserIdByName({ username: username });
       const genToken = await token.createToken({ id: id });
       console.log(genToken);
-      return res
-        .status(200)
-        .send({ Token: genToken, message: "created and logged in" });
+      return res.status(200).json({ genToken });
     }
   } catch (error) {
     return res.status(400).send({
@@ -118,7 +155,7 @@ exports.userLogin = async (req, res) => {
         username: user[0].username,
       });
       const genToken = await token.createToken({ id: id });
-      return res.status(200).send({ genToken });
+      return res.status(200).json({ genToken });
     }
   } catch (error) {
     return res.status(400).send({

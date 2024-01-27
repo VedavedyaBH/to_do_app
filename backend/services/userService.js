@@ -21,11 +21,13 @@ exports.getUserIdByName = async ({ username: username }) => {
       .select("id")
       .where("user_name", username);
 
-    console.log(user_data);
-
-    if (user_data == null) {
+    if (user_data.length == 0) {
+      console.log("returning false for existing user");
       return false;
-    } else return user_data;
+    } else {
+      console.log(user_data[0].id)
+      return user_data[0].id;
+    }
   } catch (error) {
     throw new Error("Failed to fetch");
   }

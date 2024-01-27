@@ -32,10 +32,12 @@ exports.createToken = async ({ id }) => {
 exports.verifyToken = async (req, res, next) => {
   const token = req.header("Authorization");
   let id = req.header("userid");
-  const username = req.header("username");
+  const { username } = req.body;
 
-  let tokenValue = token.genToken;
+  // let tokenValue = token.genToken;
   console.log(token);
+  console.log(username);
+
   // Parse JSON string
   //   const jsonData = JSON.parse(token);
 
@@ -67,10 +69,10 @@ exports.verifyToken = async (req, res, next) => {
     } else if (id) {
       console.log("jasfjbfjhbfksabkjbnksabnkjfbnskfjn");
       console.log(id);
-      console.log(JSON.stringify(decoded.user[0].id));
-      console.log(JSON.stringify(decoded.user[0].id) == JSON.stringify(id));
-
-      if (JSON.stringify(decoded.user[0].id) == JSON.stringify(id)) {
+      console.log(decoded.user);
+      console.log(JSON.stringify(decoded.user) == id);
+      // if (JSON.stringify(decoded.user[0].id) == JSON.stringify(id)) {
+      if (JSON.stringify(decoded.user) == id) {
         console.log("---------token verifed---------");
         next();
       } else {

@@ -30,9 +30,13 @@ function SignUp() {
       });
     }
   };
+  const login = () => {
+    navigate("/login");
+  };
   return (
     <>
       <div>
+        <button onClick={login}>Log in</button>
         <h1>Sign Up</h1>
         <h3>User Name</h3>
         <input
