@@ -1,45 +1,72 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { lazy } from "react";
+const ToDo = lazy(() => import("./ToDo"));
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
-export function LogIn() {
+function LogIn() {
+  const { _login } = useAuth();
+  let navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const signUp = () => {
-    fetch("http://localhost:8086/api/register", {
-      method: "Post",
-      headers: new Headers({
-        username: username,
-        password: password,
-      }),
-    }).then(async (res) => {
-      console.log(res);
-      alert("done");
-    });
+  const login = async () => {
+    if (username.trim() === "" || password.trim() === "") {
+      alert("Please enter something");
+    } else {
+      try {
+        const response = await fetch("http://localhost:8086/api/login", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify([
+            {
+              username: username.trim(),
+              password: password.trim(),
+            },
+          ]),
+        });
+        console.log(response.status);
+        if (response.status === 200) {
+          const _token = await response.json();
+          console.log(_token);
+          _login(username, _token);
+          navigate("/todo");
+          alert("Logged In");
+        } else {
+          alert("Invalid credentials");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
   };
 
   return (
     <>
       <div>
-        <h1>Sign Up</h1>
-        <h3>User Name</h3>
+        <h1>Log In</h1>
+        <h3>Username</h3>
         <input
           placeholder="username"
           onChange={(e) => {
             setUsername(e.target.value);
           }}
         ></input>
-
         <h3>Password</h3>
         <input
           placeholder="password"
+          type="password"
           onChange={(e) => {
             setPassword(e.target.value);
           }}
         ></input>
         <br></br>
         <br></br>
-        <button onClick={signUp}>Sign up</button>
+        <button onClick={login}>Login</button>
       </div>
     </>
   );
 }
+export default LogIn;
