@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { lazy } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 
-export function ToDo() {
+const LogIn = lazy(() => import("./LogIn"));
+
+function ToDo() {
+  const { userid, token, logout } = useAuth();
+  console.log({ userid, token });
+  let navigate = useNavigate();
   const [todo, setTodo] = useState([]);
 
   const [newTodo, setNewTodo] = useState({
@@ -10,7 +18,7 @@ export function ToDo() {
 
   useEffect(() => {
     fetchToDo();
-  }, []);
+  }, [token, userid]);
 
   const addTodo = () => {
     const requestBody = {
@@ -23,13 +31,13 @@ export function ToDo() {
       body: JSON.stringify([requestBody]),
       headers: {
         "Content-Type": "application/json",
-        userid: "ddfef708-56c8-4566-bba3-ceb3792b33b6",
+        Authorization: JSON.stringify(token),
+        userid: JSON.stringify(userid),
       },
     })
       .then(async function (res) {
         const json = await res.json();
         fetchToDo();
-
         setNewTodo({
           title: "",
           description: "",
@@ -44,9 +52,10 @@ export function ToDo() {
   const fetchToDo = () => {
     fetch("http://localhost:8086/api/to_do/", {
       method: "get",
-      headers: new Headers({
-        userid: "ddfef708-56c8-4566-bba3-ceb3792b33b6",
-      }),
+      headers: {
+        Authorization: JSON.stringify(token),
+        userid: JSON.stringify(userid),
+      },
     }).then(async function (res) {
       const json = await res.json();
       setTodo(json.data);
@@ -54,6 +63,7 @@ export function ToDo() {
   };
 
   const deleteToDo = (todo) => {
+    console.log(JSON.stringify(token));
     fetch("http://localhost:8086/api/to_do/getTodo", {
       method: "delete",
       body: JSON.stringify([
@@ -63,7 +73,8 @@ export function ToDo() {
       ]),
       headers: {
         "Content-Type": "application/json",
-        userid: "ddfef708-56c8-4566-bba3-ceb3792b33b6",
+        Authorization: JSON.stringify(token),
+        userid: JSON.stringify(userid),
       },
     }).then(async function (res) {
       fetchToDo();
@@ -71,8 +82,16 @@ export function ToDo() {
   };
 
   const updateTodo = (todo) => {
+    console.log(token);
+    let tokenValue = token.genToken;
+    console.log(tokenValue);
     fetch("http://localhost:8086/api/to_do/getTodo", {
       method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: tokenValue,
+        userid: userid,
+      },
       body: JSON.stringify([
         {
           id: todo.id,
@@ -80,10 +99,6 @@ export function ToDo() {
           description: todo.description,
         },
       ]),
-      headers: {
-        "Content-Type": "application/json",
-        userid: "ddfef708-56c8-4566-bba3-ceb3792b33b6",
-      },
     }).then(async function (res) {
       fetchToDo();
     });
@@ -103,12 +118,12 @@ export function ToDo() {
       method: "post",
       body: JSON.stringify([
         {
-          id: todo.id
+          id: todo.id,
         },
       ]),
       headers: {
         "Content-Type": "application/json",
-        userid: "ddfef708-56c8-4566-bba3-ceb3792b33b6",
+        userid: userid,
       },
     }).then(async function (res) {
       fetchToDo();
@@ -118,6 +133,14 @@ export function ToDo() {
   return (
     <>
       <div>
+        <button
+          onClick={() => {
+            logout;
+            navigate("/login");
+          }}
+        >
+          sign out
+        </button>
         <h1>
           <input
             type="text"
@@ -138,7 +161,7 @@ export function ToDo() {
         </p>
         <button onClick={addTodo}>Add</button>
       </div>
-      {todo.map((to_do) => (
+      {todo?.map((to_do) => (
         <div key={to_do.id}>
           <h1>
             <input
@@ -166,3 +189,4 @@ export function ToDo() {
     </>
   );
 }
+export default ToDo;

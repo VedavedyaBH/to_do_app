@@ -80,6 +80,7 @@ exports.getTo_dos_byId = async (req, res) => {
 exports.updateTo_doById = async (req, res) => {
   try {
     const to_doData = req.body;
+    console.log(to_doData)
     const user_id = req.header("userid");
 
     const data = await to_doServices.updateTo_doById(to_doData, user_id);

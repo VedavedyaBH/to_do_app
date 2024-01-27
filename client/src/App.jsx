@@ -1,17 +1,53 @@
 import "./App.css";
-import { ToDo } from "./components/ToDo";
-import {LogIn} from "./components/LogIn"
-import { CreateToDo } from "./components/CreateToDo";
-import React, { useEffect, useState } from "react";
+import { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { AuthProvider } from "./AuthContext";
+
+const ToDo = lazy(() => import("./components/ToDo"));
+const SignUp = lazy(() => import("./components/SignUp"));
+const LogIn = lazy(() => import("./components/LogIn"));
 
 function App() {
   return (
     <div>
-      <LogIn></LogIn>
-      {/* <CreateToDo></CreateToDo> */}
-      {/* <ToDo></ToDo> */}
+      <BrowserRouter>
+        <Routes>
+          <Route
+            path="/signup"
+            element={
+              <Suspense fallback={"Loading..."}>
+                <SignUp />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={"Loading..."}>
+                <AuthProvider >
+                  <LogIn />
+                </AuthProvider>
+              </Suspense>
+            }
+          ></Route>
+
+          <Route
+            path="/todo"
+            element={
+              <Suspense fallback={"Loading..."}>
+                <AuthProvider>
+                  <ToDo />
+                </AuthProvider>
+              </Suspense>
+            }
+          ></Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
+
+function Root() {}
 
 export default App;

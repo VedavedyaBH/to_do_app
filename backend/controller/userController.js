@@ -1,148 +1,149 @@
-const userServices = require("../services/userService")
-const token = require('../services/jwtTokenService')
-
+const userServices = require("../services/userService");
+const token = require("../services/jwtTokenService");
 
 exports.getUserbyId = async (req, res) => {
-    console.log("---------getUserbyId API triggered---------")
+  console.log("---------getUserbyId API triggered---------");
 
-    try {
-        const id = req.params.id;
-        const userData = await userServices.getUserById({ id: id });
+  try {
+    const id = req.params.id;
+    const userData = await userServices.getUserById({ id: id });
 
-        if (!userData) {
-            return res.status(404).send({ error: 'User not found!' })
-        }
-        return res.status(200).send({
-            data: userData
-        })
+    if (!userData) {
+      return res.status(404).send({ error: "User not found!" });
     }
-    catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
-    }
-}
+    return res.status(200).send({
+      data: userData,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
 
 exports.getUserbyName = async (req, res) => {
-    console.log("---------getUserbyName API triggered---------")
-    try {
-        const username = req.header('username');
-        const userData = await userServices.getUserByName({ username: username });
+  console.log("---------getUserbyName API triggered---------");
+  try {
+    const username = req.header("username");
+    const userData = await userServices.getUserByName({ username: username });
 
-        if (!userData) {
-            return res.status(404).send({ error: 'User not found!' })
-        }
-        return res.status(200).send({
-            data: userData
-        })
+    if (!userData) {
+      return res.status(404).send({ error: "User not found!" });
     }
-    catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
-    }
-}
+    return res.status(200).send({
+      data: userData,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
 
 exports.getUserIdbyName = async (req, res) => {
-    console.log("---------getUserIdbyName API triggered---------")
-    try {
-        const username = req.header('username');
-        console.log(username)
-        const userData = await userServices.getUserIdByName({ username: username });
+  console.log("---------getUserIdbyName API triggered---------");
+  try {
+    const username = req.body;
+    console.log(username);
+    const userData = await userServices.getUserIdByName({
+      username: username.username
+    });
 
-        if (!userData) {
-            return res.status(404).send({ error: 'User not found!' })
-        }
-        return res.status(200).send({
-            data: userData
-        })
+    if (!userData) {
+      return res.status(404).send({ error: "User not found!" });
     }
-    catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
-    }
-}
+    let userid = userData[0].id;
+    console.log(JSON.stringify(userid));
+    return res.status(200).send(JSON.stringify(userid));
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
 
 exports.createNewUser = async (req, res) => {
-    console.log("---------userRegistration API triggered---------")
+  console.log("---------userRegistration API triggered---------");
 
-    try {
-        const { username, password } = req.headers;
+  try {
+    const { username, password } = req.headers;
 
-        console.log("------------From CreateNewUser-----------")
-        console.log(" ")
-        console.log({ username, password });
-        console.log("------------From CreateNewUser------------")
-        console.log(" ")
+    console.log("------------From CreateNewUser-----------");
+    console.log(" ");
+    console.log({ username, password });
+    console.log("------------From CreateNewUser------------");
+    console.log(" ");
 
-        const userData = await userServices.createNewUser({ username: username, password: password });
+    const userData = await userServices.createNewUser({
+      username: username,
+      password: password,
+    });
 
-        if (!userData) {
-            return res.status(404).send({ error: 'User not created!' })
-        }
-
-        if (userData) {
-            const id = await userServices.getUserIdByName({ username: username })
-            const genToken = await token.createToken({ id: id })
-            console.log(genToken)
-            return res.status(200).send({ Token: genToken, message: 'created and logged in' })
-        }
-
-    } catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
+    if (!userData) {
+      return res.status(404).send({ error: "User not created!" });
     }
-}
+
+    if (userData) {
+      const id = await userServices.getUserIdByName({ username: username });
+      const genToken = await token.createToken({ id: id });
+      console.log(genToken);
+      return res
+        .status(200)
+        .send({ Token: genToken, message: "created and logged in" });
+    }
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
 
 exports.userLogin = async (req, res) => {
-    console.log("---------userLogin API triggered---------")
+  console.log("---------userLogin API triggered---------");
 
-    try {
-        const { username, password } = req.headers;
-        console.log({ username, password });
+  try {
+    const user = req.body;
+    console.log(user[0].username);
+    const user_data = await userServices.userLogin({
+      username: user[0].username,
+      password: user[0].password,
+    });
 
-        const user_data = await userServices.userLogin({ username: username, password: password })
-
-        if (!user_data) {
-            return res.status(404).send({ error: 'Wrong' })
-        }
-
-
-        if (user_data) {
-            const id = await userServices.getUserIdByName({ username: username })
-            const genToken = await token.createToken({ id: id })
-            return res.status(200).send({ Token: genToken, message: 'logged in' })
-        }
-
-
-
-    } catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
+    if (!user_data) {
+      return res.status(404).send({ error: "Wrong" });
     }
-}
+
+    if (user_data) {
+      const id = await userServices.getUserIdByName({
+        username: user[0].username,
+      });
+      const genToken = await token.createToken({ id: id });
+      return res.status(200).send({ genToken });
+    }
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
 
 exports.deleteUser = async (req, res) => {
-    console.log("---------userDelete API triggered---------")
+  console.log("---------userDelete API triggered---------");
 
-    try {
-        const user_id = req.params.id
+  try {
+    const user_id = req.params.id;
 
-        const data = await userServices.deleteUser({ user_id: user_id })
+    const data = await userServices.deleteUser({ user_id: user_id });
 
-        if (!data) {
-            return res.status(404).send({ error: 'User not found!' })
-        }
-        return res.status(200).send({
-            data: data
-        })
-
-    } catch (error) {
-        return res.status(400).send({
-            error: error.message
-        })
+    if (!data) {
+      return res.status(404).send({ error: "User not found!" });
     }
-}
+    return res.status(200).send({
+      data: data,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      error: error.message,
+    });
+  }
+};
