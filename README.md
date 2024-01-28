@@ -1,7 +1,7 @@
 Hi there!
 This app is created with Node.js, react, express, and mysql. 
 
-How do I set up this locally?
+How do I set this up locally?
 1. Clone the repo.
 2. Install the node modules by running 'npm run server' for the server and 'npm run dev' for the client.
 3. That's it!
