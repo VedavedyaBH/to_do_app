@@ -58,7 +58,6 @@ exports.setStatus = async (user_id, to_do) => {
 
 exports.getTo_dos_byId = async (to_do_id, user_id) => {
   try {
-    console.log(to_do_id);
     const to_doData = await db("to_do")
       .select("*")
       .where("id", to_do_id[0].id)

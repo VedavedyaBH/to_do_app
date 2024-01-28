@@ -13,9 +13,7 @@ exports.getAllTo_dos = async (req, res) => {
       res.status(404).send("Couldnot retrive");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -31,9 +29,7 @@ exports.createTo_dos = async (req, res) => {
       res.status(404).send("Couldnot create");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -49,9 +45,7 @@ exports.setStatus = async (req, res) => {
       res.status(404).send("Couldnot update the status");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -61,7 +55,6 @@ exports.getTo_dos_byId = async (req, res) => {
   try {
     const to_do_id = req.body;
     const user_id = req.header("userid");
-    console.log(user_id);
 
     const to_doData = await to_doServices.getTo_dos_byId(to_do_id, user_id);
 
@@ -69,9 +62,7 @@ exports.getTo_dos_byId = async (req, res) => {
       res.status(401).send("Could not retreive");
     }
 
-    res.status(200).send({
-      data: to_doData,
-    });
+    res.status(200).send({ to_doData });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
@@ -87,9 +78,7 @@ exports.updateTo_doById = async (req, res) => {
     if (!data) {
       res.status(401).send("Oops!");
     }
-    res.status(200).send({
-      updatedData: data,
-    });
+    res.status(200).send({ data });
   } catch (error) {
     res.status(400).send({ Error: error.message });
   }
