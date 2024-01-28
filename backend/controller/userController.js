@@ -3,7 +3,6 @@ const token = require("../services/jwtTokenService");
 const zod = require("zod");
 
 exports.getUserbyId = async (req, res) => {
-  console.log("---------getUserbyId API triggered---------");
 
   try {
     const id = req.params.id;
@@ -23,15 +22,12 @@ exports.getUserbyId = async (req, res) => {
 };
 
 exports.getUserbyName = async (req, res) => {
-  console.log("---------getUserbyName API triggered---------");
 
   const schema = zod.string();
 
   try {
     const username = req.header("username");
-    console.log(username);
     const validationResult = schema.safeParse(username);
-    console.log(validationResult);
 
     if (validationResult.error) {
       return res.status(400).send({ error: validationResult.error.message });
@@ -54,17 +50,14 @@ exports.getUserbyName = async (req, res) => {
 };
 
 exports.getUserIdbyName = async (req, res) => {
-  console.log("---------getUserIdbyName API triggered---------");
   const schema = zod.object({
     username: zod.string(),
   });
   try {
     const { username } = req.body;
-    console.log(
       "Hellpppppppppppppppppppooooooooooooooooooooooooooooooooooooooo"
     );
 
-    console.log({ username });
 
     const validationResult = schema.safeParse({ username });
 
@@ -89,7 +82,6 @@ exports.getUserIdbyName = async (req, res) => {
 };
 
 exports.createNewUser = async (req, res) => {
-  console.log("---------userRegistration API triggered---------");
 
   const schema = zod.object({
     username: zod.string(),
@@ -101,17 +93,11 @@ exports.createNewUser = async (req, res) => {
 
     const validateInputs = schema.safeParse({ username, password });
 
-    console.log(validateInputs);
 
     if (validateInputs.error) {
       return res.status(400).send({ error: validateInputs.error.message });
     }
 
-    console.log("------------From CreateNewUser-----------");
-    console.log(" ");
-    console.log({ username, password });
-    console.log("------------From CreateNewUser------------");
-    console.log(" ");
 
     const userData = await userServices.createNewUser({
       username: username,
@@ -125,7 +111,6 @@ exports.createNewUser = async (req, res) => {
     if (userData) {
       const id = await userServices.getUserIdByName({ username: username });
       const genToken = await token.createToken({ id: id });
-      console.log(genToken);
       return res.status(200).json({ genToken });
     }
   } catch (error) {
@@ -136,11 +121,9 @@ exports.createNewUser = async (req, res) => {
 };
 
 exports.userLogin = async (req, res) => {
-  console.log("---------userLogin API triggered---------");
 
   try {
     const user = req.body;
-    console.log(user[0].username);
     const user_data = await userServices.userLogin({
       username: user[0].username,
       password: user[0].password,
@@ -165,7 +148,6 @@ exports.userLogin = async (req, res) => {
 };
 
 exports.deleteUser = async (req, res) => {
-  console.log("---------userDelete API triggered---------");
 
   try {
     const user_id = req.params.id;
