@@ -5,7 +5,7 @@ const verifyToken = require("../services/jwtTokenService").verifyToken;
 const to_doController = require("../controller/to_doController");
 
 to_dos.get("/api/to_do/", use(to_doController.getAllTo_dos));
-to_dos.post("/api/to_do/",verifyToken, use(to_doController.createTo_dos));
+to_dos.post("/api/to_do/", verifyToken, use(to_doController.createTo_dos));
 to_dos.post(
   "/api/to_do/setStatus",
   verifyToken,

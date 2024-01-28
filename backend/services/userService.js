@@ -1,6 +1,5 @@
 const db = require("./knex")();
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
 
 exports.getUserById = async ({ id }) => {
@@ -15,17 +14,13 @@ exports.getUserById = async ({ id }) => {
 
 exports.getUserIdByName = async ({ username: username }) => {
   try {
-    console.log("_%%&%%%%%%%%%%%%%");
-    console.log(username);
     const user_data = await db("user")
       .select("id")
       .where("user_name", username);
 
     if (user_data.length == 0) {
-      console.log("returning false for existing user");
       return false;
     } else {
-      console.log(user_data[0].id)
       return user_data[0].id;
     }
   } catch (error) {
@@ -36,7 +31,6 @@ exports.getUserIdByName = async ({ username: username }) => {
 exports.getUserByName = async ({ username }) => {
   try {
     const user_data = await db("user").select("*").where("user_name", username);
-    console.log(user_data[0]);
     return user_data[0];
   } catch (error) {
     throw new Error("Failed to fetch user");
@@ -46,9 +40,9 @@ exports.getUserByName = async ({ username }) => {
 exports.createNewUser = async ({ username: username, password: password }) => {
   try {
     const existingUser = await this.getUserIdByName({ username: username });
-    console.log(existingUser.length);
+
     if (existingUser.length > 0) {
-      throw new ReferenceError();
+      throw new ReferenceError("Use different username");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -58,6 +52,7 @@ exports.createNewUser = async ({ username: username, password: password }) => {
       user_name: username,
       password: hashedPassword,
     });
+
     return user_data;
   } catch (error) {
     if (!ReferenceError) {

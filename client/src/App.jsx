@@ -1,7 +1,5 @@
-import "./App.css";
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 
 const ToDo = lazy(() => import("./components/ToDo"));
@@ -25,7 +23,7 @@ function App() {
             path="/login"
             element={
               <Suspense fallback={"Loading..."}>
-                <AuthProvider >
+                <AuthProvider>
                   <LogIn />
                 </AuthProvider>
               </Suspense>
@@ -47,7 +45,5 @@ function App() {
     </div>
   );
 }
-
-function Root() {}
 
 export default App;

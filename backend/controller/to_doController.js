@@ -2,7 +2,6 @@ const to_doServices = require("../services/to_doServices");
 
 exports.getAllTo_dos = async (req, res) => {
   try {
-    console.log("HIiiiiiiiiiii from todo gets")
     const user_id = req.header("userid");
     if (!user_id) {
       throw new Error("No user id found");
@@ -13,9 +12,6 @@ exports.getAllTo_dos = async (req, res) => {
     if (!to_doData) {
       res.status(404).send("Couldnot retrive");
     }
-    // console.log("byeeeee from todo gets")
-    // console.log(to_doData)
-
 
     res.status(200).send({ to_doData });
   } catch (error) {
@@ -59,7 +55,6 @@ exports.getTo_dos_byId = async (req, res) => {
   try {
     const to_do_id = req.body;
     const user_id = req.header("userid");
-    console.log(user_id);
 
     const to_doData = await to_doServices.getTo_dos_byId(to_do_id, user_id);
 
@@ -76,7 +71,6 @@ exports.getTo_dos_byId = async (req, res) => {
 exports.updateTo_doById = async (req, res) => {
   try {
     const to_doData = req.body;
-    console.log(to_doData);
     const user_id = req.header("userid");
 
     const data = await to_doServices.updateTo_doById(to_doData, user_id);

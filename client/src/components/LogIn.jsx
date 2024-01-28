@@ -30,12 +30,9 @@ function LogIn() {
         });
         if (response.status === 200) {
           const _token = await response.json();
-          console.log(_token.genToken);
-          console.log(username);
 
           _login(username, _token.genToken);
           navigate("/todo");
-          alert("Logged In");
         } else {
           alert("Invalid credentials");
         }
@@ -49,27 +46,58 @@ function LogIn() {
   };
   return (
     <>
-      <div>
-        <button onClick={signup}>Sign Up</button>
-        <h1>Log In</h1>
-        <h3>Username</h3>
-        <input
-          placeholder="username"
-          onChange={(e) => {
-            setUsername(e.target.value);
-          }}
-        ></input>
-        <h3>Password</h3>
-        <input
-          placeholder="password"
-          type="password"
-          onChange={(e) => {
-            setPassword(e.target.value);
-          }}
-        ></input>
-        <br></br>
-        <br></br>
-        <button onClick={login}>Login</button>
+      <div className="bg-gray-950 text-slate-200 h-screen flex items-center justify-center">
+        <div className="border border-white rounded p-10 shadow-inner shadow-white ">
+          <div className="flex">
+            <p className="pt-2 pr-12">Not a user? </p>
+            <button
+              className="text-slate-200 bg-transparent hover:bg-white hover:text-gray-950 font-semibold py-2 px-4 border border-none-500 hover:border-transparent rounded"
+              onClick={signup}
+            >
+              Sign Up
+            </button>
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold pb-2">Log In</h1>
+
+            <div className="mb-5">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Username
+              </label>
+              <input
+                type="text"
+                className="text-slate-200 bg-transparent font-semibold py-2 px-4 border border-none-500  rounded"
+                placeholder="username"
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+                required
+              />
+            </div>
+            <div className="mb-5">
+              <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                className="text-slate-200 bg-transparent  font-semibold py-2 px-4 border border-none-500  rounded"
+                required
+              />
+            </div>
+            <div className="float-right">
+              <button
+                className="text-slate-200 bg-transparent hover:bg-white hover:text-gray-950 font-semibold py-2 px-4 border border-none-500 hover:border-transparent rounded"
+                onClick={login}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
